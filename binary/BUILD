@@ -21,13 +21,14 @@ load("@graknlabs_bazel_distribution//rpm:rules.bzl", "assemble_rpm", "deploy_rpm
 load("@graknlabs_bazel_distribution//common:rules.bzl", "assemble_targz")
 load("@graknlabs_dependencies//distribution:deployment.bzl", "deployment")
 load("@graknlabs_dependencies//tool/checkstyle:rules.bzl", "checkstyle_test")
+load("@io_bazel_rules_go//go:def.bzl", "go_binary")
 
 exports_files(["grakn", "grakn.bat", "grakn-docker.sh"])
 
 assemble_targz(
     name = "assemble-bash-targz",
     additional_files = {
-        "//binary:grakn": 'grakn',
+        "//binary:grakn-binary-linux": 'grakn',
     },
     permissions = {
         "grakn": "0755",
@@ -101,4 +102,25 @@ checkstyle_test(
     name = "checkstyle",
     include = glob(["*"]),
     license_type = "agpl",
+)
+
+go_binary(
+    name = "grakn-binary-windows",
+    srcs = ["grakn.go"],
+    goos = "windows",
+    goarch = "amd64",
+)
+
+go_binary(
+    name = "grakn-binary-mac",
+    srcs = ["grakn.go"],
+    goos = "darwin",
+    goarch = "amd64",
+)
+
+go_binary(
+    name = "grakn-binary-linux",
+    srcs = ["grakn.go"],
+    goos = "linux",
+    goarch = "amd64",
 )
